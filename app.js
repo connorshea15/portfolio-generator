@@ -1,5 +1,7 @@
 const inquirer = require('inquirer');
-const fs = require('fs');
+// const generateSite = require('./utils/generate-site.js');
+// destructure this as follows
+const { writeFile, copyFile } = require('./utils/generate-site.js');
 const generatePage = require('./src/page-template.js');
 
 const promptUser = () => {  
@@ -119,18 +121,24 @@ const promptProject = portfolioData => {
 promptUser()
     .then(promptProject)
     .then(portfolioData => {
-      const pageHTML = generatePage(portfolioData);
-
-      fs.writeFile('./index.html', pageHTML, err => {
-           if (err) throw new Error(err);
-
-           console.log('Page created! Check out index.html in this directory to see it!');
-      });
+      return generatePage(portfolioData);
+    })
+    .then(pageHTML => {
+      return writeFile(pageHTML);
+    })
+    .then(writeFileResponse => {
+      console.log(writeFileResponse);
+      return copyFile();
+    })
+    .then(copyFileResponse => {
+      console.log(copyFileResponse);
+    })
+    .catch(err => {
+      console.log(err);
     });
+
+    
     // .then(projectAnswers => console.log(projectAnswers));    
-
-
-
 
 // This is just a reference for one way to get user input from the command prompt
 // const profileDataArgs = process.argv.slice(2, process.argv.length);
